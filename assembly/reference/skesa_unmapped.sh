@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # A script to assemble unmapped reads in all bins coming from reference assembly
 # Must be placed in the root assembly folder to work properly
