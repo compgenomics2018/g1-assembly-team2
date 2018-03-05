@@ -13,70 +13,58 @@ my @percentage_lt80; #array containing the percentage of the samples with % less
 my @related_lt80; #array containinf the most related reference to the samples with % less than 80 (index corresponds to @samples_lt80)
 my %related_species; #hash with the reference as the key and the corresponsing samples as values
 my %related_species_lt80; #hash with the reference as key and the corresponsing samples as values (only for those samples with % less than 80)
-my @allSamples; #array containing the name of all of the samples (obtaining form a list created with ls SRR* > list.txt)
 my $counter = 0; #conter for array assignment
 
+my @filenames = system(ls SRR* /projects/data/seeker_results_FINAL); #create an array where each element is the name of one of the seeker result files
 
-##### 1ST LARGE EDIT
-### Here you should add a system call to make the list (it should replace the whole while loop under this
-### somehting like this: @allSamples = system(ls SRR*)
-### basically make a system call to create a list of the samples
-### make sure the list containis the file extension of the strain seeker results (you will remove it later)
+my $number_of_files = scalar @filenames; #store the number of files in list
 
-
-#open the file containing the list of samples and store its contents into an array called @allSamples
-#this loop will be replaced by the system call above
-open(LIST, $list) or die "Could not open $list\n";
-while (<LIST>)
+#open every file, one by one
+for (my $i = 0; $i < $number_of_files; $i++)
 {
-    chomp $_; #remove end line symbol
-    $_ =~ s/\r//g; #remove carriage return
-    push @allSamples, $_; #push the sample name into an array
-}
+    my $percentage;
+    my $relatedList;
+    my $reference_species;
+    my $sample = $filenames[$i];
+    $sample =~ s/_[12]_20.fastq_seeker_run//g;
 
-##### 2ND LARGE EDIT
-### Here you should merge the script called separateSeekerResults.pl in the '/projects/data/reference_DB/genomes/treeGenomes/' directory
-### Basically you will want to create six arrays (I know it is dumb, it was just the easiest way to merge everything)
-### These are the arrays: @samples, @samples_lt80, @percentage, @percentage_lt80, @related, @related_lt80
-### Look at the separateSeekerResults.pl script (the script reads the seeker results files one by one and stores the information into arrays)
-### basically you will read the array of the list of samples
-### then you will open each file, one by one (strain seeker result files)
-### and then check the percentage, if it is greater than 80, then you store the sample name into the @samples array,
-### you also store the percentage in the @percentage array, adn the reference into the @related array
-### if the percentage is less than 80, then do the same thing but into the _lt80 arrays
-### if this requires too much work, then just open the files one by one, and store the sample, percentage, and related into arrays of your choice
-### this script would work if you did that
-### make sure that when you do all of this, the file extensions are removed in the @samples and @sampels_lt80 arrays
-
-#open the file containing the three columns (of seeker results)
-#this loop will be replaced by the merge you will do above
-open(SEEKERDATA, $seekerData) or die "Could not open $seekerData\n";
-while (<SEEKERDATA>)
-{
-    chomp $_; #remove end line symbol
-    $_ =~ s/\r//g; #remove carriage return
-    my @line = split (/\t/,$_); #split the line into an array of three elements called @line
-
-    #if the percentage is greater than 80
-    if ($line[1] > 80)
+    open(FILE, $filenames[$i]) or die "Could not open $filenames[$i]\n";
+    my $temp = <FILE>; #skip first line
+    while (<FILE>)
     {
-        push @samples, $allSamples[$counter]; #store the sample name in the @samples array
-        push @percentage, $line[1]; #store the percent into the @percentage array
-        push @related, $line[2]; #srote the reference into the @related array
+        chomp $_; #remove end line symbol
+        $_ =~ s/\r//g; #remove carriage return just in case
+        my @line = split (/\s/,$_); #create array of percentage \t 'RELATED' \t list of related species
+
+        $percentage = chomp $line[0]; #keep the percentage (remove '%' symbol)
+        $relatedList = $line[2]; #keep the lsit of related species
+    }
+
+    #if the percentage is above 80% then store the first 'related' species
+    if ($relatedList =~ m/,/)
+    {
+        my @reference = split (/,/,$relatedList); #split comma separated list
+        $reference_species = $reference[0]; #keep the first element of the list, aka the most related species
     }
     else
     {
-        push @samples_lt80, $allSamples[$counter]; #srote the sample name into the @samples_lt80 array
-        push @percentage_lt80, $line[1]; #store the percentage into the @percentage_lt80 array
-        push @related_lt80, $line[2];  #sore the reference into the @related_lt80 array
+       $reference_species = $relatedList; #if there is just one element in the list then just make that element equal to $reference_species
     }
-    $counter+=1; #increase the counter so that the sample name changes each loop iteration
+
+    if ($percentage >= 80)
+    {
+        push @samples, $sample; #store the sample name in the @samples array
+        push @percentage, $percentage; #store the percent into the @percentage array
+        push @related, $reference_species; #srote the reference into the @related array
+    }
+    elsif ($percentage < 80)
+    {
+        push @samples_lt80, $sample; #store the sample name into the @samples_lt80 array
+        push @percentage_lt80, $percentage; #store the percentage into the @percentage_lt80 array
+        push @related_lt80, $reference_species;  #store the reference into the @related_lt80 array
+    }
 }
 
-##### DO NOT MOVE ANYTHING BELOW THIS
-### Make sure that by this point the six important arrays are populated (@sampels, @percentage, @related, and the same but with _lt80)
-
-my $totalSamples = scalar @allSamples; #number of samples
 my $gt80 = scalar @samples; #number of samples with percentages greater than 80
 my $lt80 = scalar @samples_lt80; #number of samples with percentages less than 80
 
@@ -113,26 +101,16 @@ system($a);
 my $e = 'mkdir /projects/data/sra_1_fastq_trimmedFINAL/seeker_result_bins/less_than_80';
 system($e);
 
-foreach my $key (keys %related_species)
+foreach my $key (keys %related_species_gt80)
 {
-    my $b = 'mkdir /projects/data/sra_1_fastq_trimmedFINAL/seeker_result_bins/'.$key;
-    system($b);
-}
-
-for (my $k = 0; $k < $gt80; $k++)
-{
-    my $c = 'mv /projects/data/sra_1_fastq_trimmedFINAL/'.$samples[$k].' /projects/data/sra_1_fastq_trimmedFINAL/seeker_result_bins/'.$related[$k];
-    system($c);
+    my $fh;
+    open($fh, "+>", $key); #open the output file
+    print $fh values %related_species_gt80{$key}; #print list of samples
 }
 
 foreach my $key (keys %related_species_lt80)
 {
-    my $f = 'mkdir /projects/data/sra_1_fastq_trimmedFINAL/seeker_result_bins/less_than_80/'.$key;
-    system($f);
-}
-
-for (my $k = 0; $k < $lt80; $k++)
-{
-    my $g = 'mv /projects/data/sra_1_fastq_trimmedFINAL/'.$samples_lt80[$k].' /projects/data/sra_1_fastq_trimmedFINAL/seeker_result_bins/less_than_80/'.$related_lt80[$k];
-    system($g);
+    my $fh;
+    open($fh, "+>", $key); #open the output file
+    print $fh values %related_species_lt80{$key}; #print list of samples
 }

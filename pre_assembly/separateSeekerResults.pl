@@ -3,24 +3,19 @@ use warnings;
 
 my $list = $ARGV[0]; #txt file with a list of the file names
 my $outfile = $ARGV[1]; #file name of the output
-my @filenames; #array containing the list of file names (one file per array element)
+
+my @samples_all; #array containing all of the samples
+my @percentage_all; #array contianing the percentage of all of the samples
+my @related_all; #array containing the most related reference to each of the samples
 
 open(OUT, "+>", $outfile); #open the output file
 
-#open the list of file names
-open(FILELIST, $list) or die "Could not open $list\n";
-while (<FILELIST>)
-{
-    chomp $_; #remove end line symbol
-    $_ =~ s/\r//g; #remove carriage return
-
-    push @filenames, $_; #name array of filenames (one file per array element)
-}
+my @filenames = system(ls SRR* /projects/data/seeker_results_FINAL);
 
 my $number_of_files = scalar @filenames; #store the number of files in list
 
 #open every file, one by one
-for (my $i; $i <= $number_of_files; $i++)
+for (my $i = 0; $i < $number_of_files; $i++)
 {
     my $sample = $filenames[$i]; #store the sample name
     my $percentage;
@@ -28,6 +23,7 @@ for (my $i; $i <= $number_of_files; $i++)
     my $reference_species;
 
     open(FILE, $filenames[$i]) or die "Could not open $filenames[$i]\n";
+    my $temp = FILE; #skip first line
     while (<FILE>)
     {
         chomp $_; #remove end line symbol
@@ -38,7 +34,7 @@ for (my $i; $i <= $number_of_files; $i++)
         $relatedList = $line[2]; #keep the lsit of related species
     }
 
-    #if the percentage is above 0% then store the first 'related' species
+    #if the percentage is above 80% then store the first 'related' species
     if ($relatedList =~ m/,/)
     {
         my @reference = split (/,/,$relatedList); #split comma separated list
@@ -46,8 +42,10 @@ for (my $i; $i <= $number_of_files; $i++)
     }
     else
     {
-	$reference_species = $relatedList; #if there is just one element in the list then just make that element equal to $reference_species
+	   $reference_species = $relatedList; #if there is just one element in the list then just make that element equal to $reference_species
     }
 
-    print OUT "$sample\t$percentage\t$reference_species\n"; #print out the sample name, percentage, and the reference species it is most related to
+    push @samples_all, $sample;
+    push @percentage_all, $percentage;
+    push @related_all, $reference_species;
 }
