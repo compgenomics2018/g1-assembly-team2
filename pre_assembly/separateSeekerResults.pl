@@ -17,13 +17,14 @@ my $number_of_files = scalar @filenames; #store the number of files in list
 #open every file, one by one
 for (my $i = 0; $i < $number_of_files; $i++)
 {
-    my $sample = $filenames[$i]; #store the sample name
     my $percentage;
     my $relatedList;
     my $reference_species;
+    my $sample = $filenames[$i];
+    $sample =~ s/_[12]_20.fastq_seeker_run//g;
 
     open(FILE, $filenames[$i]) or die "Could not open $filenames[$i]\n";
-    my $temp = FILE; #skip first line
+    my $temp = <FILE>; #skip first line
     while (<FILE>)
     {
         chomp $_; #remove end line symbol
@@ -42,10 +43,19 @@ for (my $i = 0; $i < $number_of_files; $i++)
     }
     else
     {
-	   $reference_species = $relatedList; #if there is just one element in the list then just make that element equal to $reference_species
+       $reference_species = $relatedList; #if there is just one element in the list then just make that element equal to $reference_species
     }
 
-    push @samples_all, $sample;
-    push @percentage_all, $percentage;
-    push @related_all, $reference_species;
+    if ($percentage >= 80)
+    {
+        push @samples, $sample; #store the sample name in the @samples array
+        push @percentage, $percentage; #store the percent into the @percentage array
+        push @related, $reference_species; #srote the reference into the @related array
+    }
+    elsif ($percentage < 80)
+    {
+        push @samples_lt80, $sample; #store the sample name into the @samples_lt80 array
+        push @percentage_lt80, $percentage; #store the percentage into the @percentage_lt80 array
+        push @related_lt80, $reference_species;  #store the reference into the @related_lt80 array
+    }
 }
