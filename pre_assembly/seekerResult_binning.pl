@@ -1,10 +1,6 @@
 use strict;
 use warnings;
 
-my $seekerData = $ARGV[0];
-my $list = $ARGV[1];
-my @filenames; #array containing the list of file names (one file per array element)
-
 my @samples; #array containing the samples that have a % greater than 80
 my @percentage; #array contianing the percentage of the samples with % greater than 80 (index corresponds to @samples)
 my @related; #array containing the most related reference to the samples with % greater than 80 (index corresponds to @samples)
@@ -15,7 +11,7 @@ my %related_species; #hash with the reference as the key and the corresponsing s
 my %related_species_lt80; #hash with the reference as key and the corresponsing samples as values (only for those samples with % less than 80)
 my $counter = 0; #conter for array assignment
 
-my @filenames = system(ls SRR* /projects/data/seeker_results_FINAL); #create an array where each element is the name of one of the seeker result files
+my @filenames = system('ls SRR* /projects/data/seeker_results_FINAL'); #create an array where each element is the name of one of the seeker result files
 
 my $number_of_files = scalar @filenames; #store the number of files in list
 
@@ -94,11 +90,11 @@ for (my $j = 0; $j < $lt80; $j++)
     }
 }
 
-#System calls to make the directories and move the trimmed results into those directories
-my $a = 'mkdir /projects/data/sra_1_fastq_trimmedFINAL/seeker_result_bins';
+#System calls to make the directories and make the trimmed results into those directories
+my $a = 'mkdir /reference/seeker_result_bins';
 system($a);
 
-my $e = 'mkdir /projects/data/sra_1_fastq_trimmedFINAL/seeker_result_bins/less_than_80';
+my $e = 'mkdir /reference/seeker_result_bins/less_than_80';
 system($e);
 
 foreach my $key (keys %related_species_gt80)
