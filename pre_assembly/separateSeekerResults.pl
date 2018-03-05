@@ -38,12 +38,16 @@ for (my $i; $i <= $number_of_files; $i++)
         $relatedList = $line[2]; #keep the lsit of related species
     }
 
-    #if the percentage is above 90% then store the first 'related' species
-    if ($percentage > 90)
+    #if the percentage is above 0% then store the first 'related' species
+    if ($relatedList =~ m/,/)
     {
         my @reference = split (/,/,$relatedList); #split comma separated list
         $reference_species = $reference[0]; #keep the first element of the list, aka the most related species
     }
+    else
+    {
+	$reference_species = $relatedList; #if there is just one element in the list then just make that element equal to $reference_species
+    }
 
-    print OUT "$sample\t$reference_species\n"; #print out the sample name and the reference species it is most related to
+    print OUT "$sample\t$percentage\t$reference_species\n"; #print out the sample name, percentage, and the reference species it is most related to
 }
