@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 use strict;
 use warnings;
 
@@ -11,7 +12,7 @@ my %related_species_gt80; #hash with the reference as the key and the correspons
 my %related_species_lt80; #hash with the reference as key and the corresponsing samples as values (only for those samples with % less than 80)
 my $counter = 0; #conter for array assignment
 
-my @filenames = system('ls SRR* /projects/data/seeker_results_FINAL'); #create an array where each element is the name of one of the seeker result files
+my @filenames = glob(' SRR* '); #create an array where each element is the name of one of the seeker result files
 
 my $number_of_files = scalar @filenames; #store the number of files in list
 
@@ -32,7 +33,8 @@ for (my $i = 0; $i < $number_of_files; $i++)
         $_ =~ s/\r//g; #remove carriage return just in case
         my @line = split (/\s/,$_); #create array of percentage \t 'RELATED' \t list of related species
 
-        $percentage = chomp $line[0]; #keep the percentage (remove '%' symbol)
+        $percentage = $line[0];
+        chop $percentage;
         $relatedList = $line[2]; #keep the lsit of related species
     }
 
@@ -67,13 +69,13 @@ my $lt80 = scalar @samples_lt80; #number of samples with percentages less than 8
 #for all samples with percentages greater than 80, store the sample name into its corresponding hash
 for (my $j = 0; $j < $gt80; $j++)
 {
-    if (defined $related_species{$related[$j]})
+    if (defined $related_species_gt80{$related[$j]})
     {
-        push @{$related_species{$related[$j]}}, $samples[$j];
+        push @{$related_species_gt80{$related[$j]}}, $samples[$j];
     }
     else
     {
-        $related_species{$related[$j]} = [$samples[$j]];
+        $related_species_gt80{$related[$j]} = [$samples[$j]];
     }  
 }
 
@@ -91,22 +93,22 @@ for (my $j = 0; $j < $lt80; $j++)
 }
 
 #System calls to make the directories and make the trimmed results into those directories
-my $a = 'mkdir /reference/seeker_result_bins';
+my $a = 'mkdir ./reference/seeker_result_bins';
 system($a);
 
-my $e = 'mkdir /reference/seeker_result_bins/less_than_80';
+my $e = 'mkdir ./reference/seeker_result_bins/less_than_80';
 system($e);
 
 foreach my $key (keys %related_species_gt80)
 {
-    my $fh;
-    open($fh, "+>", $key); #open the output file
-    print $fh values %related_species_gt80{$key}; #print list of samples
+    my $output = "reference/seeker_result_bins/".$key.".txt";
+    open(OUT, "+>", $output); #open the output file
+    print OUT "@{$related_species_gt80{$key}}\n"; #print list of samples
 }
 
-foreach my $key (keys $related_species_lt80)
+foreach my $key (keys %related_species_lt80)
 {
-    my $fh;
-    open($fh, "+>", $key); #open the output file
-    print $fh values $related_species_lt80{$key}; #print list of samples
+    my $output = "reference/seeker_result_bins/less_than_80/".$key.".txt";
+    open(OUT, "+>", $output); #open the output file
+    print OUT "@{$related_species_lt80{$key}}\n"; #print list of samples
 }
