@@ -46,7 +46,7 @@ for (my $i = 0; $i < $number_of_files; $i++)
     }
     else
     {
-       $reference_species = $relatedList; #if there is just one element in the list then just make that element equal to $reference_species
+	$reference_species = $relatedList; #if there is just one element in the list then just make that element equal to $reference_species
     }
 
     if ($percentage >= 80)
@@ -76,7 +76,7 @@ for (my $j = 0; $j < $gt80; $j++)
     else
     {
         $related_species_gt80{$related[$j]} = [$samples[$j]];
-    }  
+    }
 }
 
 #for all samples with percentages less than 80, store the sample name into its corresponsing hash
@@ -96,12 +96,15 @@ for (my $j = 0; $j < $lt80; $j++)
 my $a = 'mkdir ./reference/seeker_result_bins';
 system($a);
 
+my $b = 'mkdir ./reference/seeker_result_bins/greater_than_80';
+system($b);
+
 my $e = 'mkdir ./reference/seeker_result_bins/less_than_80';
 system($e);
 
 foreach my $key (keys %related_species_gt80)
 {
-    my $output = "reference/seeker_result_bins/".$key.".txt";
+    my $output = "reference/seeker_result_bins/greater_than_80/".$key.".txt";
     open(OUT, "+>", $output); #open the output file
     print OUT "@{$related_species_gt80{$key}}\n"; #print list of samples
 }
