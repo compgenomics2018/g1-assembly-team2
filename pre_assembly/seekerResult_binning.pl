@@ -7,7 +7,7 @@ my @related; #array containing the most related reference to the samples with % 
 my @samples_lt80; #array containing the samples that have a % less than 80
 my @percentage_lt80; #array containing the percentage of the samples with % less than 80 (index corresponding to @samples_lt80)
 my @related_lt80; #array containinf the most related reference to the samples with % less than 80 (index corresponds to @samples_lt80)
-my %related_species; #hash with the reference as the key and the corresponsing samples as values
+my %related_species_gt80; #hash with the reference as the key and the corresponsing samples as values
 my %related_species_lt80; #hash with the reference as key and the corresponsing samples as values (only for those samples with % less than 80)
 my $counter = 0; #conter for array assignment
 
@@ -104,9 +104,9 @@ foreach my $key (keys %related_species_gt80)
     print $fh values %related_species_gt80{$key}; #print list of samples
 }
 
-foreach my $key (keys %related_species_lt80)
+foreach my $key (keys $related_species_lt80)
 {
     my $fh;
     open($fh, "+>", $key); #open the output file
-    print $fh values %related_species_lt80{$key}; #print list of samples
+    print $fh values $related_species_lt80{$key}; #print list of samples
 }
