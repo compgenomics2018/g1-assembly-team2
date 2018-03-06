@@ -60,7 +60,7 @@ fi
 ##############################################################################################################################
 #trimming
 #trim_galore takes in paired end .fq files and removes adapters
-#trim_galore --illumina --paired $reads_pair1 $reads_pair2 -o /projects/data/temp
+trim_galore --illumina --paired $reads_pair1 $reads_pair2 -o /projects/data/temp
 
 echo ${reads_pair1:0:10} 
 
