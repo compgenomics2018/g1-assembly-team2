@@ -1,33 +1,53 @@
 import os
 
-os.system("ls SRR* > FileList.txt")
-
-f = open("FileList.txt", "r")
-ReadList = []
+f = open("RefList.txt", "r")
+RefList = []
 for line in f:
-	ReadList.append(line)
+	RefList.append(line)
 f.close()
 
+l = len(RefList)
 
-os.system("bowtie2 -build ./Reference/* ./Reference/ref")
-os.system("mv ./Reference/* ./")
-os.system("cp ./*.fna ./Reference/")
-
-l = len(ReadList)
-
-for i in range (0, l, 2):
-	x = ReadList[i][0:10]
-	os.system("bowtie2 -x ref -1 "+str(x)+"_1_20.fastq -2 "+str(x)+"_2_20.fastq --un unmapped."+str(x)" -S "+str(x)+".sam")
-
-for i in range (0, l, 2):
-	x = ReadList[i][0:10]
-	os.system("samtools view -bS ./"+str(x)+".sam > ./"+str(x)+".bam")
-	os.system("samtools sort -o ./"+str(x)+"_sorted.bam ./"+str(x)+".bam")
-	os.system("samtools index ./"+str(x)+"_sorted.bam")
-	os.system("bam2fastq --no-aligned --strict --force -o ./unmapped"+str(x)+"#.fastq ./"+str(x)+"_sorted.bam")
-	os.system("samtools mpileup -f ./Reference/*.fna -gu ./"+str(x)+"_sorted.bam | bcftools call -c -O b -o ./"+str(x)+".raw.bcf")
-	os.system("bcftools view -O v ./"+str(x)+".raw.bcf | vcfutils.pl vcf2fq > ./"+str(x)+".fastq")
-	os.system("seqret -sequence ./"+str(x)+".fastq -outseq ./"+str(x)+".fasta")
-	os.system("rm ./"+str(x)+".bam*")
-	os.system("rm ./"+str(x)+".fastq")
-	os.system("rm ./"+str(x)+"raw.bcf")
+for i in range (0, l):
+	x = RefList[i]
+	x = x.rstrip()
+	os.system("bowtie2-build ./"+str(x)+"/Reference/*.fna ./"+str(x)+"/Reference/ref")
+	# Builds the reference in each folder and names it "ref"
+	os.system("mv ./"+str(x)+"/Reference/* ./"+str(x)+"/")
+	# Moves files outside of Reference folder
+	os.system("cp ./"+str(x)+"/*.fna ./"+str(x)+"/Reference/")
+	# Copies fna of reference back in to Reference folder for ease of reference
+	ReadList = open("./"+str(x)+"/"+str(x)+".txt").read().split()
+	# # Opens list containing reads 
+	k = len(ReadList)
+	for j in range (0, k):
+		y = ReadList[j][0:10]
+		print "1"
+		os.system("bowtie2 -x ./"+str(x)+"/ref -1 /projects/data/SCRIPT_TEST/"+str(y)+"_1.fastq -2 /projects/data/SCRIPT_TEST/"+str(y)+"_2.fastq --un ./"+str(x)+"/unmapped."+str(y)+" -S ./"+str(x)+"/"+str(y)+".sam")
+		# Runs bowtie alignment /projects/data/SCRIPTS_TEST should be changed to directory with trimmed reads inside
+		print "2"
+		os.system("samtools view -bS ./"+str(x)+"/"+str(y)+".sam > ./"+str(x)+"/"+str(y)+".bam")
+		# Converts sam to bam
+		print "3"
+		os.system("samtools sort -o ./"+str(x)+"/"+str(y)+"_sorted.bam ./"+str(x)+"/"+str(y)+".bam")
+		print "4"
+		# Sorts bam file
+		os.system("samtools index ./"+str(x)+"/"+str(y)+"_sorted.bam")
+		print "5"
+		# Indexes sorted bam file
+		os.system("bam2fastq --no-aligned --strict --force -o ./"+str(x)+"/unmapped"+str(y)+"#.fastq ./"+str(x)+"/"+str(y)+"_sorted.bam")
+		print "6"
+		# Converst bam to fastq
+		os.system("samtools mpileup -f ./"+str(x)+"/Reference/*.fna -gu ./"+str(x)+"/"+str(y)+"_sorted.bam | bcftools call -c -O b -o ./"+str(x)+"/"+str(y)+".raw.bcf")
+		print "7"
+		# Calls SNPs/indels between reference and query
+		os.system("bcftools view -O v ./"+str(x)+"/"+str(y)+".raw.bcf | vcfutils.pl vcf2fq > ./"+str(x)+"/"+str(y)+".fastq")
+		print "8"
+		# Converts variant called files to fastq
+		os.system("seqret -sequence ./"+str(x)+"/"+str(y)+".fastq -outseq ./"+str(x)+"/"+str(y)+".fasta")
+		print "9"
+		# Converts query fastq to fasta
+		os.system("rm ./"+str(x)+"/"+str(y)+"*.bam*")
+		os.system("rm ./"+str(x)+"/"+str(y)+".fastq")
+		os.system("rm ./"+str(x)+"/"+str(y)+"*raw.bcf")
+		# Cleans the directory
