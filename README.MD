@@ -18,7 +18,11 @@ The repository is organized as follows:
     ├── post_assembly           # A set of post-assembly scripts
     └
 
-For information how to use the final assembly pipeline, run
+To assemble a genome, run
+
+    ./final_pipeline -a forward_reads.fastq -b reverse_reads.fastq -o assembly.fasta
+
+To display additional options, run
 
     ./final_pipeline -h
 
