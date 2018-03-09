@@ -77,6 +77,8 @@ sickle pe -q $phred_quality_threshold -f /projects/data/temp/${reads_pair1:0:10}
 if [[ $reference_assembly -eq 1 ]]; then                   
   echo "Please use the standalone reference assembly script in /assembly/reference or use de novo assembly. It will be added to the pipeline soon"        
   exit 1;
+else
+  de_novo=1
 fi
 
 ###########################################################################################################################
