@@ -7,8 +7,7 @@ reads_pair1=""
 reads_pair2=""
 output=""
 phred_quality_threshold=20
-
-usage() { echo "Usage: filename.sh -a <fastq_reads_pair1> -b <fastq_reads_pair2> -o <output filename> [-t Phred q score threshold ] [-r reference assembly] [-d de novo assembly] [-h help] " ; exit 1; }
+usage() { echo "Usage: filename.sh -a <fastq_reads_pair1.fastq> -b <fastq_reads_pair2.fastq> -o <output filename> [-t Phred q score threshold ] [-r reference assembly] [-d de novo assembly] [-h help] " ; exit 1; }
 
 while getopts a:b:rdo:ht: ARGS; do
   case $ARGS in   
@@ -74,33 +73,34 @@ if [[ $reference_assembly -eq 1 && $de_novo -eq 1 ]]; then
     echo "Please choose either reference or de novo assembly" ;exit 1;
 fi
 
-##############################################################################################################################
 #trimming
 #trim_galore takes in paired end .fq files and removes adapters
-trim_galore --illumina --paired $reads_pair1 $reads_pair2 -o /projects/data/temp
+trim_galore --illumina --paired $reads_pair1 $reads_pair2 -o .
 
-echo ${reads_pair1:0:10} 
-
-#sickle trims according to a quality threshold and uses a sliding window
-sickle pe -q $phred_quality_threshold -f /projects/data/temp/${reads_pair1:0:10}_1_val_1.fq -r /projects/data/temp/${reads_pair1:0:10}_2_val_2.fq -t sanger -o /projects/data/sra_1_fastq_trimmedFINAL/${reads_pair1:0:10}_1_20.fastq -p /projects/data/sra_1_fastq_trimmedFINAL/${reads_pair1:0:10}_2_20.fastq -s /projects/data/sra_1_fastq_trimmedSINGLE/${reads_pair1:0:10}_singles_20.fastq
-#mv ../temp/*_1_20.fastq ../sra_1_fastq_trimmedFINAL/
-#mv ../temp/*_2_20.fastq ../sra_1_fastq_trimmedFINAL/
-#rm ../temp/*val*
-#rm ../sra_1_fastq_trimmedFINAL/*singles*
+# this is what trimgalore output files look like. File .fastq or .fq file format of input files is assumed
+trimOut1=`echo $reads_pair1 | sed -e "s/\.[^.]*$/_val_1.fq/" | awk -F/ '{print $NF}'`
+trimOut2=`echo $reads_pair2 | sed -e "s/\.[^.]*$/_val_2.fq/" | awk -F/ '{print $NF}'`
+rm *_trimming_report.txt
 
 
-################################################################################################################################
+sickleOut1=`echo $reads_pair1 | sed -e "s/\.[^.]*$/_sickle_1.fq/" | awk -F/ '{print $NF}'`
+sickleOut2=`echo $reads_pair2 | sed -e "s/\.[^.]*$/_sickle_2.fq/" | awk -F/ '{print $NF}'`
+
+# Sickle trims according to a quality threshold and uses a sliding window
+sickle pe -q $phred_quality_threshold -f $trimOut1 -r $trimOut2 -t sanger -o $sickleOut1 -p $sickleOut2 -s singles.fastq
+
+rm singles.fastq
+rm $trimOut1
+rm $trimOut2
+
 
 if [[ $reference_assembly -eq 1 ]]; then                   
   echo "Please use the standalone reference assembly script in /assembly/reference or use de novo assembly."
   exit 1;
 fi
 
-###########################################################################################################################
-
 
 de_novo.sh $sickleOut1 $sickleOut2 $output
 
-
-
-exit 1;
+rm $sickleOut1
+rm $sickleOut2
