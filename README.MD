@@ -27,3 +27,15 @@ To display additional options, run
     ./final_pipeline -h
 
 The remaining folders contain individual scripts which are not necessarily included in the final pipeline. Some of these scripts **might only work on** `biogenome2018b.biology.gatech.edu` server since they rely on specific files present on this server.
+
+## Installation & Dependencies
+
+No installation is needed, only thing required is to clone the repository and run the `final_pipeline.sh` script.
+
+However, several dependencies are assumed in the path:
+
+* [TrimGalore](https://github.com/FelixKrueger/TrimGalore)
+* [Sickle](https://github.com/najoshi/sickle)
+* Skesa (Not open sourced yet)
+
+A description of each of these tools is available in the [project's wiki](http://www.compgenomics2018.biosci.gatech.edu/Team_II_Genome_Assembly_Group).
