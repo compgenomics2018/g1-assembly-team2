@@ -6,6 +6,7 @@ de_novo=0
 reads_pair1=""
 reads_pair2=""
 output=""
+phred_quality_threshold=20
 
 usage() { echo "Usage: filename.sh -a <fastq_reads_pair1> -b <fastq_reads_pair2> -o <output filename> [-t Phred q score threshold ] [-r reference assembly] [-d de novo assembly] [-h help] " ; exit 1; }
 
@@ -41,11 +42,7 @@ while getopts a:b:rdo:ht: ARGS; do
        fi
        ;;
     
-    t) phred_quality_threshold=$OPTARG 
-       if [[ ! -e "$phred_quality_threshold" ]]; then          
-        phred_quality_threshold=20;
-        fi
-       ;;
+    t) phred_quality_threshold=$OPTARG ;;
     
     
     *|h) usage ;;
