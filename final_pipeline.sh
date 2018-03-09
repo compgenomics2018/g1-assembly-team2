@@ -3,6 +3,10 @@
 
 reference_assembly=0
 de_novo=0
+reads_pair1=""
+reads_pair2=""
+output=""
+
 usage() { echo "Usage: filename.sh -a <fastq_reads_pair1> -b <fastq_reads_pair2> -o <output filename> [-t Phred q score threshold ] [-r reference assembly] [-d de novo assembly] [-h help] " ; exit 1; }
 
 while getopts a:b:rdo:ht: ARGS; do
@@ -51,7 +55,23 @@ while getopts a:b:rdo:ht: ARGS; do
 esac   
 done
 
+if [[ -z $reads_pair1 ]]; then
+  echo "Please specify file with forward reads"
+  usage
+  exit 1
+fi
 
+if [[ -z $reads_pair2 ]]; then
+  echo "Please specify file with reverse reads"
+  usage
+  exit 1
+fi
+
+if [[ -z $output ]]; then
+  echo "Please specify output file"
+  usage
+  exit 1
+fi
 
 if [[ $reference_assembly -eq 1 && $de_novo -eq 1 ]]; then
     echo "Please choose either reference or de novo assembly" ;exit 1;
