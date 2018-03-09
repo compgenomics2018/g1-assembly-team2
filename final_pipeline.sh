@@ -7,7 +7,7 @@ reads_pair1=""
 reads_pair2=""
 output=""
 phred_quality_threshold=20
-usage() { echo "Usage: filename.sh -a <fastq_reads_pair1.fastq> -b <fastq_reads_pair2.fastq> -o <output filename> [-t Phred q score threshold ] [-r reference assembly] [-d de novo assembly] [-h help] " ; exit 1; }
+usage() { echo "Usage: filename.sh -a <fastq_reads_pair1.fastq> -b <fastq_reads_pair2.fastq> -o <output filename> [-t Phred q score threshold ] [-h help] " ; exit 1; }
 
 while getopts a:b:rdo:ht: ARGS; do
   case $ARGS in   
@@ -95,7 +95,7 @@ rm $trimOut2
 
 
 if [[ $reference_assembly -eq 1 ]]; then                   
-  echo "Please use the standalone reference assembly script in /assembly/reference or use de novo assembly."
+  echo "This option is not fully supported yet. Plese use the de novo assembly."
   exit 1;
 fi
 
