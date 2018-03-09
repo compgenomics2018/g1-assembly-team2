@@ -95,18 +95,15 @@ sickle pe -q $phred_quality_threshold -f /projects/data/temp/${reads_pair1:0:10}
 ################################################################################################################################
 
 if [[ $reference_assembly -eq 1 ]]; then                   
-  echo "Please use the standalone reference assembly script in /assembly/reference or use de novo assembly. It will be added to the pipeline soon"        
+  echo "Please use the standalone reference assembly script in /assembly/reference or use de novo assembly."
   exit 1;
-else
-  de_novo=1
 fi
 
 ###########################################################################################################################
 
-if [[ $de_novo -eq 1 ]]; then
-    de_novo.sh /projects/data/sra_1_fastq_trimmedFINAL/${reads_pair1:0:10}_1_20.fastq /projects/data/sra_1_fastq_trimmedFINAL/SRR5666515_2_20.fastq $output
-else
-    echo "Reference Assembly"
-fi
+
+de_novo.sh $sickleOut1 $sickleOut2 $output
+
+
 
 exit 1;
