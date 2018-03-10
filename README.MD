@@ -47,6 +47,6 @@ However, several dependencies are assumed in the path:
 	* [Samtools](https://github.com/samtools/)
 	* [Bcfools](https://github.com/samtools/bcftools)
 	* [EMBOSS Seqret](http://emboss.sourceforge.net/apps/release/6.6/emboss/apps/seqret.html)
-
-
+	* [GenomeTester4](https://github.com/bioinfo-ut/GenomeTester4)
+	
 A description of each of these tools is available in the [project's wiki](http://www.compgenomics2018.biosci.gatech.edu/Team_II_Genome_Assembly_Group).
