@@ -99,8 +99,10 @@ if [[ $reference_assembly -eq 1 ]]; then
   exit 1;
 fi
 
+scriptPath=`realpath $0`
+scriptDir=`dirname $scriptPath`
 
-de_novo.sh $sickleOut1 $sickleOut2 $output
+$scriptDir/de_novo.sh $sickleOut1 $sickleOut2 $output
 
 rm $sickleOut1
 rm $sickleOut2
