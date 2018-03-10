@@ -34,13 +34,19 @@ No installation is needed, only thing required is to clone the repository and ru
 
 However, several dependencies are assumed in the path:
 
-* [TrimGalore](https://github.com/FelixKrueger/TrimGalore)
-	* [Cutadapt](https://github.com/marcelm/cutadapt)
-	* [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-* [Sickle](https://github.com/najoshi/sickle)
-* Skesa  (Not open sourced yet)
-* [SSPACE](https://github.com/nsoranzo/sspace_basic)
-* [Bowtie2](https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.4.1)
+* **Trimming**
+	* [TrimGalore](https://github.com/FelixKrueger/TrimGalore)
+		* [Cutadapt](https://github.com/marcelm/cutadapt)
+		* [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+	* [Sickle](https://github.com/najoshi/sickle)
+* **De Novo**
+	* Skesa  (Not open sourced yet)
+	* [SSPACE](https://github.com/nsoranzo/sspace_basic)
+* **Reference** (Currently in develpoment)
+	* [Bowtie2](https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.4.1)
+	* [Samtools](https://github.com/samtools/)
+	* [Bcfools](https://github.com/samtools/bcftools)
+	* [EMBOSS Seqret](http://emboss.sourceforge.net/apps/release/6.6/emboss/apps/seqret.html)
 
 
 A description of each of these tools is available in the [project's wiki](http://www.compgenomics2018.biosci.gatech.edu/Team_II_Genome_Assembly_Group).
