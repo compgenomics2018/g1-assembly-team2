@@ -34,8 +34,12 @@ No installation is needed, only thing required is to clone the repository and ru
 
 However, several dependencies are assumed in the path:
 
-* [TrimGalore](https://github.com/FelixKrueger/TrimGalore)
-* [Sickle](https://github.com/najoshi/sickle)
-* Skesa (Not open sourced yet)
+* [TrimGalore] (https://github.com/FelixKrueger/TrimGalore)   
+* [Cutadapt] (https://github.com/marcelm/cutadapt)
+* [Sickle] (https://github.com/najoshi/sickle)
+* Skesa  (Not open sourced yet)
+* [SSPACE] (https://github.com/nsoranzo/sspace_basic)
+* [Bowtie2] (https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.4.1)
+
 
 A description of each of these tools is available in the [project's wiki](http://www.compgenomics2018.biosci.gatech.edu/Team_II_Genome_Assembly_Group).
