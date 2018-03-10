@@ -42,6 +42,8 @@ However, several dependencies are assumed in the path:
 * **De Novo**
 	* Skesa  (Not open sourced yet)
 	* [SSPACE Standard](https://vcru.wisc.edu/simonlab/bioinformatics/programs/install/sspace.htm)
+		* The installation of SSPACE is a little tricky, SSPACE folder needs to be in your path. Please follow the [official installation instructions.](https://vcru.wisc.edu/simonlab/bioinformatics/programs/install/sspace.htm)
+		* On the server, this means adding `PATH="$PATH:/projects/data/bin/SSPACE"` to your .bashrc/profile etc.
 * **Reference** (Currently in development)
 	* [Bowtie2](https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.4.1)
 	* [Samtools](https://github.com/samtools/)

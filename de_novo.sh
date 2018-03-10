@@ -26,10 +26,7 @@ echo -n "lib1 bowtie $1 $2 $INSERT_SIZE 0.99 FR" > "$3.lib.tmp"
 # Create random output folder for sspace
 out=`cat /dev/urandom | tr -cd 'a-f0-9' | head -c 10`
 
-# Run sspace. Currently, absolute path to sspace is used, proper installation
-# in the common bin needs to be done
-/projects/data/bin/SSPACE-STANDARD-3.0_linux-x86_64/SSPACE_Standard_v3.0.pl \
--l "$3.lib.tmp"  -s "$3.skesa.tmp" -b "$out" -x 1
+SSPACE_Standard_v3.0.pl -l "$3.lib.tmp"  -s "$3.skesa.tmp" -b "$out" -x 1
 
 mv "$out/$out.final.scaffolds.fasta" "$3"
 
