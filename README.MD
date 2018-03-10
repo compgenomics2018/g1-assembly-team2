@@ -42,7 +42,7 @@ However, several dependencies are assumed in the path:
 * **De Novo**
 	* Skesa  (Not open sourced yet)
 	* [SSPACE](https://github.com/nsoranzo/sspace_basic)
-* **Reference** (Currently in develpoment)
+* **Reference** (Currently in development)
 	* [Bowtie2](https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.4.1)
 	* [Samtools](https://github.com/samtools/)
 	* [Bcfools](https://github.com/samtools/bcftools)
