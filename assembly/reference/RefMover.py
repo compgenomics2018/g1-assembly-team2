@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os
 
 #Grabs a list of all the references
